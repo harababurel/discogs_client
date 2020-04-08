@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import backoff
 import warnings
 import json
 try:
@@ -93,6 +94,7 @@ class Client(object):
         if not self.user_agent:
             raise ConfigurationError('Invalid or no User-Agent set.')
 
+    @backoff.on_exception(backoff.expo, HTTPError)
     def _request(self, method, url, data=None):
         if self.verbose:
             print(' '.join((method, url)))
